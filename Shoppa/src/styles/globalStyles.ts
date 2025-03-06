@@ -1,12 +1,12 @@
-import { StyleSheet, StatusBar } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: StatusBar.currentHeight,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    width: 100,
   },
   image: {
     width: 100,
