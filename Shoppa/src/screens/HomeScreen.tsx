@@ -14,6 +14,7 @@ import { GlobalContext } from '../context/globalContext';
 import ProductCard from '../components/productCard';
 import { products } from '../data/products';
 
+
 const HomeScreen = ({ navigation }) => {
   const globalContext = useContext(GlobalContext);
   if (!globalContext) return null;
