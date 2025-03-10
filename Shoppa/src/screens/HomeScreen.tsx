@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { View, FlatList, StyleSheet } from 'react-native';
 import { GlobalContext } from '../context/globalContext';
-import ProductCard from '../components/ProductCard';
+import ProductCard from '../components/productCard';
 
 const HomeScreen = () => {
   const globalContext = useContext(GlobalContext);
