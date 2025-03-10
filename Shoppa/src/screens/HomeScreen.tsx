@@ -17,7 +17,9 @@ import { products } from '../data/products';
 
 const HomeScreen = ({ navigation }) => {
   const globalContext = useContext(GlobalContext);
-  if (!globalContext) return null;
+    if (!globalContext) {
+      throw new Error("GlobalContext must be used within a GlobalProvider");
+    }
 
   const { addToCart, cartCount } = globalContext; // cartCount from context
 
