@@ -1,0 +1,73 @@
+export const products = [
+    {
+      id: '1',
+      name: 'Light Novel Title 1',
+      description: 'An exciting adventure of heroism and magic.',
+      image: 'https://picsum.photos/200/300',
+      price: 9.99,
+    },
+    {
+      id: '2',
+      name: 'Light Novel Title 2',
+      description: 'A tale of love and destiny across realms.',
+      image: 'https://picsum.photos/id/237/200/300',
+      price: 12.99,
+    },
+    {
+      id: '3',
+      name: 'Light Novel Title 3',
+      description: 'A tale of love and destiny across realms.',
+      image: 'https://picsum.photos/id/237/200/300',
+      price: 12.99,
+    },
+    {
+      id: '4',
+      name: 'Light Novel Title 4',
+      description: 'A tale of love and destiny across realms.',
+      image: 'https://picsum.photos/id/237/200/300',
+      price: 12.99,
+    },
+    {
+      id: '5',
+      name: 'Light Novel Title 5',
+      description: 'A tale of love and destiny across realms.',
+      image: 'https://picsum.photos/id/237/200/300',
+      price: 12.99,
+    },
+    {
+      id: '6',
+      name: 'Light Novel Title 6',
+      description: 'A tale of love and destiny across realms.',
+      image: 'https://picsum.photos/id/237/200/300',
+      price: 12.99,
+    },
+    {
+      id: '7',
+      name: 'Light Novel Title 7',
+      description: 'A tale of love and destiny across realms.',
+      image: 'https://picsum.photos/id/237/200/300',
+      price: 12.99,
+    },
+    {
+      id: '8',
+      name: 'Light Novel Title 8',
+      description: 'A tale of love and destiny across realms.',
+      image: 'https://picsum.photos/id/237/200/300',
+      price: 12.99,
+    },
+    {
+      id: '9',
+      name: 'Light Novel Title 9',
+      description: 'A tale of love and destiny across realms.',
+      image: 'https://picsum.photos/id/237/200/300',
+      price: 12.99,
+    },
+    {
+      id: '10',
+      name: 'Light Novel Title 10',
+      description: 'A tale of love and destiny across realms.',
+      image: 'https://picsum.photos/id/237/200/300',
+      price: 12.99,
+    },
+  ];
+  

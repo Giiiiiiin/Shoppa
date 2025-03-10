@@ -30,21 +30,22 @@ export const GlobalProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
     // Function to add items to cart
     const addToCart = (item: CartItem) => {
-        setCart((prevCart) => {
-            const existingItem = prevCart.find((cartItem) => cartItem.id === item.id);
-            if (existingItem) {
-                return prevCart.map((cartItem) =>
-                    cartItem.id === item.id
-                        ? { ...cartItem, quantity: cartItem.quantity + item.quantity }
-                        : cartItem
-                );
-            } else {
-                return [...prevCart, item];
-            }
-        });
+    // Use item.quantity if defined; otherwise default to 1
+      const quantityToAdd = item.quantity ?? 1;
+      setCart((prevCart) => {
+        const existingItem = prevCart.find((cartItem) => cartItem.id === item.id);
+        if (existingItem) {
+            return prevCart.map((cartItem) =>
+                cartItem.id === item.id
+                    ? { ...cartItem, quantity: cartItem.quantity + quantityToAdd }
+                    : cartItem
+            );
+        } else {
+            return [...prevCart, { ...item, quantity: quantityToAdd }];
+        }
+      });
     };
 
-    // Function to remove an item from the cart
     const removeFromCart = (id: string) => {
         setCart((prevCart) => prevCart.filter((item) => item.id !== id));
     };

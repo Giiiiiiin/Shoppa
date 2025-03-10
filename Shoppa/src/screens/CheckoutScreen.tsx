@@ -1,244 +1,167 @@
-import React, { useState } from 'react';
-import { SafeAreaView, Text, FlatList, StyleSheet, View, Pressable, Modal } from 'react-native';
-import { Props } from '../navigation/props';
+import React, { useContext } from 'react';
+import { 
+  View, 
+  Text, 
+  FlatList, 
+  StyleSheet, 
+  Pressable, 
+  Image, 
+  Alert 
+} from 'react-native';
+import { GlobalContext } from '../context/globalContext';
 
-interface CheckoutItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-}
+const CheckoutScreen = ({ navigation }) => {
+  const globalContext = useContext(GlobalContext);
+  if (!globalContext) return null;
 
-interface CheckoutScreenParams {
-  cartItems: CheckoutItem[];
-  totalAmount?: string;
-}
+  const { cart, clearCart } = globalContext;
 
-const CheckoutScreen: React.FC<Props> = ({ route, navigation }) => {
-  const { cartItems, totalAmount } = route.params as CheckoutScreenParams;
-  
-  // Compute grand total if not provided
-  const computedTotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0).toFixed(2);
-  const grandTotal = totalAmount || computedTotal;
+  // Calculate each item's total and the grand total
+  const calculateItemTotal = (item) => item.price * item.quantity;
+  const grandTotal = cart
+    .reduce((total, item) => total + calculateItemTotal(item), 0)
+    .toFixed(2);
 
-  const [modalVisible, setModalVisible] = useState(false);
+  // Handle the checkout action
+  const handleCheckout = () => {
+    Alert.alert(
+      "Checkout Successful!",
+      "",
+      [
+        {
+          text: "OK",
+          onPress: () => {
+            clearCart();
+            navigation.navigate('Home');
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
 
-  const renderItem = ({ item }: { item: CheckoutItem }) => (
-    <View style={styles.card}>
-      <View style={styles.productNameContainer}>
-        <Text style={styles.title}>{item.name}</Text>
-      </View>
-      <View style={styles.productPriceContainer}>
-        <Text style={styles.price}>${item.price}</Text>
-      </View>
-      <View style={styles.productQuantityContainer}>
-        <Text style={styles.quantity}>Quantity: {item.quantity}</Text>
-      </View>
-      <View style={styles.productTotalPriceContainer}>
-        <Text style={styles.totalPrice}>
-          Total: ${parseFloat((item.price * item.quantity).toFixed(2))}
+  // Render each cart item with an image on the left and info on the right
+  const renderItem = ({ item }) => (
+    <View style={styles.itemCard}>
+      <Image source={{ uri: item.image }} style={styles.itemImage} />
+      <View style={styles.itemInfo}>
+        <Text style={styles.itemName}>{item.name}</Text>
+        <Text style={styles.itemPrice}>Price: ${item.price.toFixed(2)}</Text>
+        <Text style={styles.itemQuantity}>Quantity: {item.quantity}</Text>
+        <Text style={styles.itemTotal}>
+          Total: ${calculateItemTotal(item).toFixed(2)}
         </Text>
       </View>
     </View>
   );
 
-  const handleCheckoutItems = () => {
-    setModalVisible(true);
-  };
-
-  const handleOk = () => {
-    setModalVisible(false);
-    // Navigate to Home with an empty cart.
-    navigation.navigate('Home', { cart: {} });
-  };
-
   return (
-    <SafeAreaView style={styles.container}>
-      <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Text style={styles.backButtonText}>← Back</Text>
-      </Pressable>
-      <Text style={styles.header}>Order Summary</Text>
-      {cartItems && cartItems.length > 0 ? (
-        <>
-          <FlatList
-            data={cartItems}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.listContainer}
-          />
-          <View style={styles.totalContainer}>
-            <Text style={styles.totalText}>Grand Total: ${grandTotal}</Text>
-          </View>
-          <View style={styles.checkoutItemsContainer}>
-            <Pressable style={styles.checkoutItemsButton} onPress={handleCheckoutItems}>
-              <Text style={styles.buttonText}>Checkout Items</Text>
-            </Pressable>
-          </View>
-        </>
-      ) : (
-        <Text style={styles.emptyText}>No items in your order.</Text>
-      )}
+    <View style={styles.container}>
+      <FlatList 
+        data={cart}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.list}
+      />
 
-      {/* Custom Modal for Checkout Confirmation */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Checkout Successful!</Text>
-            <Text style={styles.modalMessage}>
-              Your order has been placed successfully!
-            </Text>
-            <Pressable style={styles.modalButton} onPress={handleOk}>
-              <Text style={styles.modalButtonText}>OK</Text>
-            </Pressable>
-          </View>
+      {/* Sticky bottom container */}
+      <View style={styles.stickyContainer}>
+        <View style={styles.totalContainer}>
+          <Text style={styles.grandTotalText}>Grand Total: ${grandTotal}</Text>
         </View>
-      </Modal>
-    </SafeAreaView>
+        <Pressable 
+          style={({ pressed }) => [
+            styles.checkoutButton,
+            pressed && styles.checkoutButtonPressed,
+          ]}
+          onPress={handleCheckout}
+        >
+          <Text style={styles.checkoutButtonText}>Checkout</Text>
+        </Pressable>
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: 'lightyellow',
-    alignItems: 'center',
-  },
-  backButton: {
-    alignSelf: 'flex-start',
+    backgroundColor: '#000000', // Dominant color (60%)
     padding: 10,
-    backgroundColor: '#2575fc',
-    borderRadius: 10,
-    marginBottom: 20,
   },
-  backButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+  list: {
+    paddingBottom: 140, // Extra space for sticky container
   },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: 'darkblue',
-    textAlign: 'center',
-  },
-  listContainer: {
-    paddingBottom: 20,
-    width: '100%',
-  },
-  card: {
-    padding: 20,
+  itemCard: {
+    flexDirection: 'row',
+    backgroundColor: '#1C1C1C',
+    borderRadius: 8,
+    padding: 15,
     marginVertical: 10,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 10,
-    elevation: 3,
     alignItems: 'center',
-    width: '100%',
   },
-  productNameContainer: {
-    marginBottom: 10,
+  itemImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
+    marginRight: 15,
   },
-  productPriceContainer: {
-    marginBottom: 10,
+  itemInfo: {
+    flex: 1,
   },
-  productQuantityContainer: {
-    marginBottom: 10,
+  itemName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginBottom: 4,
   },
-  productTotalPriceContainer: {
+  itemPrice: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    marginBottom: 4,
+  },
+  itemQuantity: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    marginBottom: 4,
+  },
+  itemTotal: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FF4500', // Orange text for item total
+  },
+  stickyContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     padding: 10,
-    backgroundColor: 'red',
+    backgroundColor: '#1C1C1C',
+  },
+  totalContainer: {
+    marginBottom: 10,
+    alignItems: 'center',
+  },
+  grandTotalText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  checkoutButton: {
+    width: '100%',
+    backgroundColor: '#FF4500',
+    paddingVertical: 15,
     borderRadius: 5,
     alignItems: 'center',
   },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
+  checkoutButtonPressed: {
+    transform: [{ scale: 0.95 }],
+    backgroundColor: '#E03D00',
   },
-  price: {
-    fontSize: 16,
-    color: '#333',
-  },
-  quantity: {
-    fontSize: 14,
-    color: '#555',
-  },
-  totalPrice: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  totalContainer: {
-    marginTop: 20,
-    padding: 15,
-    backgroundColor: '#6a11cb',
-    borderRadius: 10,
-    alignItems: 'center',
-    width: '100%',
-  },
-  totalText: {
-    color: '#fff',
+  checkoutButtonText: {
+    color: '#FFFFFF',
     fontWeight: 'bold',
     fontSize: 18,
-  },
-  checkoutItemsContainer: {
-    marginTop: 20,
-    width: '100%',
-    alignItems: 'center',
-  },
-  checkoutItemsButton: {
-    padding: 15,
-    backgroundColor: '#2575fc',
-    borderRadius: 10,
-    width: '100%',
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 18,
-  },
-  emptyText: {
-    fontSize: 18,
-    color: '#888',
-    textAlign: 'center',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContainer: {
-    width: '80%',
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  modalTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  modalMessage: {
-    fontSize: 16,
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  modalButton: {
-    padding: 10,
-    backgroundColor: '#2575fc',
-    borderRadius: 10,
-    width: '100%',
-    alignItems: 'center',
-  },
-  modalButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
   },
 });
 

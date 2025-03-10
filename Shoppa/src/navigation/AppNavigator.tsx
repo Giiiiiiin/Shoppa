@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import HomeScreen from '../screens/HomeScreen';
 import CheckoutScreen from '../screens/CheckoutScreen';
 import CartScreen from '../screens/CartScreen';
-import { customTheme } from '../theme';
+import { customTheme } from '../themes/theme';
 
 const Stack = createNativeStackNavigator();
 

@@ -6,10 +6,22 @@ const ProductCard = ({ item, onAddToCart }) => {
     <View style={styles.card}>
       <Image source={{ uri: item.image }} style={styles.image} />
       <View style={styles.infoContainer}>
-        <Text style={styles.title}>{item.name}</Text>
-        <Text style={styles.description}>{item.description}</Text>
-        <Text style={styles.price}>${item.price.toFixed(2)}</Text>
-        <Pressable style={styles.button} onPress={() => onAddToCart(item)}>
+        <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+          {item.name}
+        </Text>
+        <Text style={styles.description} numberOfLines={2} ellipsizeMode="tail">
+          {item.description}
+        </Text>
+        <Text style={styles.price}>
+          ${item.price.toFixed(2)}
+        </Text>
+        <Pressable
+          onPress={() => onAddToCart(item)}
+          style={({ pressed }) => [
+            styles.button,
+            pressed && styles.buttonPressed,
+          ]}
+        >
           <Text style={styles.buttonText}>Add to Cart</Text>
         </Pressable>
       </View>
@@ -20,51 +32,53 @@ const ProductCard = ({ item, onAddToCart }) => {
 const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
-    backgroundColor: '#1C1C1C', // Dark shade for card background
+    backgroundColor: '#1C1C1C',
     borderRadius: 8,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
-    elevation: 3,
     marginVertical: 10,
     marginHorizontal: 20,
+    height: 150,
+    overflow: 'hidden', 
   },
   image: {
     width: 100,
-    height: 150,
+    height: '100%',
     borderTopLeftRadius: 8,
     borderBottomLeftRadius: 8,
   },
   infoContainer: {
     flex: 1,
     padding: 10,
+    justifyContent: 'space-between',
   },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#FFFFFF', // White text
-    marginBottom: 5,
+    color: '#FFFFFF',
+    marginBottom: 2,
   },
   description: {
     fontSize: 14,
-    color: '#CCCCCC', // Light gray text
-    marginBottom: 10,
+    color: '#CCCCCC',
+    marginBottom: 2,
   },
   price: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#FFFFFF', // White text
-    marginBottom: 10,
+    color: '#FFFFFF',
+    marginBottom: 5,
   },
   button: {
-    backgroundColor: '#FF4500', // Accent color (red)
-    paddingVertical: 10,
+    backgroundColor: '#FF4500',
+    paddingVertical: 8,
     borderRadius: 5,
     alignItems: 'center',
   },
+  buttonPressed: {
+    transform: [{ scale: 0.95 }],
+    backgroundColor: '#E03D00',
+  },
   buttonText: {
-    color: '#FFFFFF', // White text
+    color: '#FFFFFF',
     fontWeight: 'bold',
   },
 });
