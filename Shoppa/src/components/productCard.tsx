@@ -1,7 +1,17 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, Pressable } from 'react-native';
+import { showMessage } from 'react-native-flash-message';
 
 const ProductCard = ({ item, onAddToCart }) => {
+  const handleAddToCart = () => {
+    onAddToCart(item);
+    showMessage({
+      message: "+ Added to Cart!",
+      type: "success",
+      duration: 1000, // Duration in milliseconds
+    });
+  };
+
   return (
     <View style={styles.card}>
       <Image source={{ uri: item.image }} style={styles.image} />
@@ -16,7 +26,7 @@ const ProductCard = ({ item, onAddToCart }) => {
           ${item.price.toFixed(2)}
         </Text>
         <Pressable
-          onPress={() => onAddToCart(item)}
+          onPress={handleAddToCart}
           style={({ pressed }) => [
             styles.button,
             pressed && styles.buttonPressed,

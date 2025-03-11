@@ -13,20 +13,18 @@ import {
 import { GlobalContext } from '../context/globalContext';
 import ProductCard from '../components/productCard';
 import { products } from '../data/products';
+import { showMessage } from 'react-native-flash-message';
 
 
 const HomeScreen = ({ navigation }) => {
   const globalContext = useContext(GlobalContext);
-    if (!globalContext) {
-      throw new Error("GlobalContext must be used within a GlobalProvider");
-    }
+  if (!globalContext) {
+    throw new Error("GlobalContext must be used within a GlobalProvider");
+  }
 
-  const { addToCart, cartCount } = globalContext; // cartCount from context
-
-  // State for modal visibility and selected product details
+  const { addToCart, cartCount } = globalContext;
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-
   const opacityAnim = useRef(new Animated.Value(0)).current;
 
   const showProductDetails = (product) => {
@@ -49,6 +47,17 @@ const HomeScreen = ({ navigation }) => {
       setModalVisible(false);
       setSelectedProduct(null);
     });
+  };
+
+  const handleAddToCart = () => {
+    if (selectedProduct) {
+      addToCart(selectedProduct);
+      showMessage({
+        message: "+ Added to Cart!",
+        type: "success",
+        duration: 1000,
+      });
+    }
   };
 
   return (
@@ -116,16 +125,38 @@ const HomeScreen = ({ navigation }) => {
                 </>
               )}
             </ScrollView>
-            <View style={modalStyles.stickyContainer}>
+
+            {/* Sticky Price Section */}
+            {selectedProduct && (
               <View style={modalStyles.priceContainer}>
-                {selectedProduct && (
-                  <Text style={modalStyles.modalPrice}>
-                    ${selectedProduct.price.toFixed(2)}
-                  </Text>
-                )}
+                <Text style={modalStyles.priceText}>
+                  ${selectedProduct.price.toFixed(2)}
+                </Text>
               </View>
+            )}
+
+            {/* Two Buttons: Add to Cart (Left) & Close (Right) */}
+            <View style={modalStyles.buttonContainer}>
               <Pressable
                 style={({ pressed }) => [
+                  {
+                    transform: [{ scale: pressed ? 0.97 : 1 }],
+                    opacity: pressed ? 0.9 : 1,
+                  },
+                  modalStyles.addToCartButton,
+                  pressed && modalStyles.addToCartButtonPressed,
+                ]}
+                onPress={handleAddToCart}
+              >
+                <Text style={modalStyles.addToCartButtonText}>Add to Cart</Text>
+              </Pressable>
+
+              <Pressable
+                style={({ pressed }) => [
+                  {
+                    transform: [{ scale: pressed ? 0.97 : 1 }],
+                    opacity: pressed ? 0.9 : 1,
+                  },
                   modalStyles.closeButton,
                   pressed && modalStyles.closeButtonPressed,
                 ]}
@@ -141,6 +172,7 @@ const HomeScreen = ({ navigation }) => {
   );
 };
 
+// Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -225,37 +257,55 @@ const modalStyles = StyleSheet.create({
     marginBottom: 10,
     color: '#FFFFFF',
   },
-  stickyContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: 10,
-    backgroundColor: '#000000',
-    alignItems: 'center',
-  },
   priceContainer: {
-    marginBottom: 10,
+    backgroundColor: '#1C1C1C',
+    paddingVertical: 10,
+    borderRadius: 5,
+    borderTopWidth: 1,
+    borderColor: '#6A0DAD',
     alignItems: 'center',
+    marginBottom: 10,
   },
-  modalPrice: {
+  priceText: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#FFFFFF',
   },
-  closeButton: {
-    width: '100%',
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
+  },
+  addToCartButton: {
+    flex: 1,
     backgroundColor: '#FF4500',
     paddingVertical: 10,
     borderRadius: 5,
     alignItems: 'center',
+    marginRight: 5,
   },
-  closeButtonPressed: {
-    transform: [{ scale: 0.95 }],
+  addToCartButtonPressed: {
     backgroundColor: '#E03D00',
   },
-  closeButtonText: {
+  addToCartButtonText: {
     color: '#FFFFFF',
+    fontWeight: 'bold',
+  },
+  closeButton: {
+    flex: 1,
+    backgroundColor: '#000000',
+    borderColor: '#FF4500',
+    borderWidth: 2,
+    paddingVertical: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginLeft: 5,
+  },
+  closeButtonPressed: {
+    backgroundColor: '#1C1C1C',
+  },
+  closeButtonText: {
+    color: '#FF4500',
     fontWeight: 'bold',
   },
 });
