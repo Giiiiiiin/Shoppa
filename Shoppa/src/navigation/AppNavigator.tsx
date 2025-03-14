@@ -13,9 +13,9 @@ const AppNavigator = () => {
     <NavigationContainer theme={customTheme}>
       <Stack.Navigator
         screenOptions={{
-          headerStyle: { backgroundColor: customTheme.colors.primary }, // Purple background
-          headerTintColor: customTheme.colors.text, // White text
-          headerTitleStyle: { fontWeight: 'bold' }, // Bold title
+          headerStyle: { backgroundColor: customTheme.colors.primary },
+          headerTintColor: customTheme.colors.text, 
+          headerTitleStyle: { fontWeight: 'bold' }, 
         }}
       >
         <Stack.Screen
